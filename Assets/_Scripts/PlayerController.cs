@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
     float _baseSpeed = 10.0f;
     float _gravidade = 9.8f;
+    GameManager gm;
 
     CharacterController characterController;
     
@@ -12,16 +13,35 @@ public class PlayerController : MonoBehaviour {
     GameObject playerCamera;
     //Utilizada para poder travar a rotação no angulo que quisermos.
     float cameraRotation;
-    
+
+    Vector3 warpPosition = Vector3.zero;
+    public void WarpToPosition(Vector3 newPosition) {
+        warpPosition = newPosition;
+    }
+
+    public void ResetPosition() {
+        warpPosition = new Vector3(0f, 0.1f, 0f);
+    }
+
     void Start() {
+        gm = GameManager.GetInstance();
+        gm.player = this;
+
         characterController = GetComponent<CharacterController>();
-        
         playerCamera = GameObject.Find("Main Camera");
         cameraRotation = 0.0f;
 
     }
 
     void Update() {
+        if (gm.currentState != GameManager.GameState.GAME) {
+            return;
+        }
+
+        if ( Input.GetKeyDown(KeyCode.Escape) && gm.currentState == GameManager.GameState.GAME ) {
+            gm.changeState(GameManager.GameState.PAUSE);
+        }
+
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
@@ -51,6 +71,10 @@ public class PlayerController : MonoBehaviour {
         Debug.DrawRay(playerCamera.transform.position, transform.forward * 10.0f, Color.magenta);
         if (Physics.Raycast(playerCamera.transform.position, transform.forward, out hit, 100.0f)) {
             Debug.Log(hit.collider.name);
+        }
+        if ( warpPosition != Vector3.zero ) {
+            transform.position = warpPosition;
+            warpPosition = Vector3.zero;
         }
     }
 }
