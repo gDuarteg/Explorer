@@ -7,8 +7,10 @@ public class PlayerController : MonoBehaviour {
     float _gravidade = 9.8f;
     GameManager gm;
 
+    public GameObject chest;
+
     CharacterController characterController;
-    
+
     //Referência usada para a câmera filha do jogador
     GameObject playerCamera;
     //Utilizada para poder travar a rotação no angulo que quisermos.
@@ -19,7 +21,7 @@ public class PlayerController : MonoBehaviour {
         warpPosition = newPosition;
     }
 
-    public void ResetPosition() {
+    public void Reset() {
         warpPosition = new Vector3(0f, 0.1f, 0f);
     }
 
@@ -34,20 +36,26 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Update() {
-        if (gm.currentState != GameManager.GameState.GAME) {
+        if ( gm.currentState != GameManager.GameState.GAME ) {
+            Debug.Log(gm.currentState);
             return;
         }
 
         if ( Input.GetKeyDown(KeyCode.Escape) && gm.currentState == GameManager.GameState.GAME ) {
             gm.changeState(GameManager.GameState.PAUSE);
+            return;
         }
 
+        gm.remainingTime -= 1 * Time.deltaTime;
+        if ( gm.remainingTime <= 0 ) {
+            gm.EndGame();
+        }
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
         //Verificando se é preciso aplicar a gravidade
         float y = 0;
-        if (!characterController.isGrounded) {
+        if ( !characterController.isGrounded ) {
             y = -_gravidade;
         }
 
@@ -68,10 +76,19 @@ public class PlayerController : MonoBehaviour {
 
     void LateUpdate() {
         RaycastHit hit;
-        Debug.DrawRay(playerCamera.transform.position, transform.forward * 10.0f, Color.magenta);
-        if (Physics.Raycast(playerCamera.transform.position, transform.forward, out hit, 100.0f)) {
-            Debug.Log(hit.collider.name);
+
+        Debug.DrawRay(transform.position, playerCamera.transform.forward* 10.0f, Color.magenta);
+        if (gm.currentState == GameManager.GameState.GAME) {
+            if ( Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, 5.0f) ) {
+                if ( hit.collider.gameObject.Equals(chest) ) {
+                    gm.EndGame();
+                }
+                //gm.EndGame();
+            }
         }
+        //if ( Physics.Raycast(playerCamera.transform.position, transform.forward, out hit, 100.0f) ) {
+        //    Debug.Log(hit.collider.name);
+        //}
         if ( warpPosition != Vector3.zero ) {
             transform.position = warpPosition;
             warpPosition = Vector3.zero;
