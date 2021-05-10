@@ -17,6 +17,10 @@ public class Menu : MonoBehaviour {
         gm.changeState(GameManager.GameState.OPTIONS);
     }
 
+    public void GoToTutorial() {
+        gm.changeState(GameManager.GameState.TUTORIAL);
+    }
+
     public void UnPauseGame() {
         gm.changeState(GameManager.GameState.GAME);
     }

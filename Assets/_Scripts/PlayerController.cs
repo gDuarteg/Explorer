@@ -5,11 +5,13 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
     float _baseSpeed = 10.0f;
     float _gravidade = 9.8f;
-    GameManager gm;
+    float jumpForce = 200;
 
     public GameObject chest;
-
+    
+    GameManager gm;
     CharacterController characterController;
+    //public Rigidbody rb;
 
     //Referência usada para a câmera filha do jogador
     GameObject playerCamera;
@@ -26,13 +28,13 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Start() {
+        //rb = GetComponent<Rigidbody>();
         gm = GameManager.GetInstance();
         gm.player = this;
 
         characterController = GetComponent<CharacterController>();
         playerCamera = GameObject.Find("Main Camera");
         cameraRotation = 0.0f;
-
     }
 
     void Update() {
@@ -53,25 +55,24 @@ public class PlayerController : MonoBehaviour {
         float z = Input.GetAxis("Vertical");
 
         //Verificando se é preciso aplicar a gravidade
-        float y = 0;
-        //if ( !characterController.isGrounded ) {
+        //float y = 0;
+        //if (!characterController.isGrounded) {
+        //    y = -_gravidade;
+        //}
+        
+        //if(characterController.isGrounded) {
+        //    y = -_gravidade;
+            
+        //    if (Input.GetKeyDown(KeyCode.Space)) {
+        //        //transform.position += new Vector3(0, 100, 0) * 10 * Time.deltaTime;
+        //        //characterController.SimpleMove(new Vector3(0, 100, 0));
+        //        //characterController.Move(new Vector3(0, 100, 0) * 1 * Time.deltaTime);
+        //        y = jumpForce;
+        //    }
+        //} else {
         //    y = -_gravidade;
         //}
 
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            //transform.position += new Vector3(0, 100, 0) * 10 * Time.deltaTime;
-            //characterController.SimpleMove(new Vector3(0, 100, 0));
-            //characterController.Move(new Vector3(0, 100, 0) * 1 * Time.deltaTime);
-            //y = 10;
-
-            warpPosition = new Vector3(0, 5, 0);
-
-
-
-            //Vector3 aaa = transform.right * x + transform.up * y + transform.forward * z;
-
-            //characterController.Move(aaa * _baseSpeed * Time.deltaTime);
-        }
 
         //Tratando movimentação do mouse
         float mouse_dX = Input.GetAxis("Mouse X");
@@ -81,10 +82,20 @@ public class PlayerController : MonoBehaviour {
         cameraRotation += mouse_dY;
         Mathf.Clamp(cameraRotation, -75.0f, 75.0f);
 
-        Vector3 direction = transform.right * x + transform.up * y + transform.forward * z;
+        Vector3 moveDirection = new Vector3(x, 0, z);
+        moveDirection = transform.TransformDirection(moveDirection);
+        moveDirection *= _baseSpeed;
 
-        Debug.Log(direction * _baseSpeed * Time.deltaTime);
-        characterController.Move(direction * _baseSpeed * Time.deltaTime);
+        if (Input.GetKeyDown(KeyCode.Space) && characterController.isGrounded) {
+            moveDirection.y = jumpForce;
+        }
+        if (!characterController.isGrounded) {
+            moveDirection.y -= _gravidade;
+        }
+
+        Debug.Log(moveDirection);
+        characterController.Move(moveDirection * Time.deltaTime);
+
         transform.Rotate(Vector3.up, mouse_dX);
         playerCamera.transform.localRotation = Quaternion.Euler(cameraRotation, 0.0f, 0.0f);
     }
@@ -93,7 +104,7 @@ public class PlayerController : MonoBehaviour {
         if (gm.currentState != GameManager.GameState.GAME) {
             return;
         }
-
+        
         RaycastHit hit;
         Debug.DrawRay(transform.position, playerCamera.transform.forward* 5.0f, Color.magenta);
         if (gm.currentState == GameManager.GameState.GAME) {

@@ -5,7 +5,7 @@ public class GameManager {
     public delegate void ChangeStateDelegate();
     public static ChangeStateDelegate changeStateDelegate;
 
-    public enum GameState { MENU, GAME, PAUSE, ENDGAME, OPTIONS };
+    public enum GameState { MENU, GAME, PAUSE, ENDGAME, OPTIONS, TUTORIAL };
     public enum EndGameState { WON, LOST };
 
     public EndGameState endGameStatus { get; private set; }
@@ -29,7 +29,7 @@ public class GameManager {
     }
 
     public void changeState(GameState nextState) {
-        if ( currentState != GameState.PAUSE && currentState != GameState.OPTIONS && nextState == GameState.GAME ) Reset();
+        if ( currentState != GameState.PAUSE && currentState != GameState.OPTIONS && currentState != GameState.TUTORIAL && nextState == GameState.GAME ) Reset();
         currentState = nextState;
         changeStateDelegate();
 
@@ -49,7 +49,7 @@ public class GameManager {
 
     public void Reset() {
         endGameStatus = EndGameState.LOST;
-        remainingTime = 30.0f;
+        remainingTime = 61.0f;
         player.Reset();
     }
 
