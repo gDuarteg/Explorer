@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour {
     float _baseSpeed = 10.0f;
     float _gravidade = 9.8f;
     float jumpForce = 200;
-    bool doubleJump = false;
+    bool doubleJump = true;
     public GameObject chest;
     
     GameManager gm;
@@ -89,19 +89,34 @@ public class PlayerController : MonoBehaviour {
             _baseSpeed = 10.0f;
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftControl)) {
+            _baseSpeed = 5.0f;
+            playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
+        }
+        if (Input.GetKeyUp(KeyCode.LeftControl)) {
+            _baseSpeed = 10.0f;
+            playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + 0.69f, transform.position.z);
+        }
+
         Vector3 moveDirection = new Vector3(x, 0, z);
         moveDirection = transform.TransformDirection(moveDirection);
         moveDirection *= _baseSpeed;
 
-        if (characterController.isGrounded) {
-            doubleJump = false;
-            if (Input.GetKeyDown(KeyCode.Space)) {
+        if (characterController.isGrounded || doubleJump == true) {
+            if (Input.GetKeyDown(KeyCode.Space) && _baseSpeed == 10.0f) {
                 moveDirection.y = jumpForce;
+                doubleJump = false;
+            }
+            else if(Input.GetKeyDown(KeyCode.Space) && _baseSpeed == 20.0f) {
+                moveDirection.y = jumpForce * 2;
+                doubleJump = false;
             }
         }
 
         if (!characterController.isGrounded) {
             moveDirection.y -= _gravidade;
+        } else {
+            doubleJump = true;
         }
 
         Debug.Log(moveDirection);
