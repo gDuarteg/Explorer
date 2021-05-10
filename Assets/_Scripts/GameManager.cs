@@ -11,31 +11,23 @@ public class GameManager {
     public EndGameState endGameStatus { get; private set; }
     public GameState currentState { get; private set; }
 
+    public PlayerController player { get; set; }
+
     public float remainingTime = 20.0f;
 
-    public PlayerController player { get; set; }
 
     private GameManager() {
         currentState = GameState.MENU;
         endGameStatus = EndGameState.LOST;
     }
 
-    public void EndGame() {
-        if ( remainingTime == 0f ) {
-            endGameStatus = EndGameState.LOST;
-        } else {
-            endGameStatus = EndGameState.WON;
-        }
-        changeState(GameManager.GameState.ENDGAME);
-    }
-
     public static GameManager GetInstance() {
         if ( _instance == null ) {
             _instance = new GameManager();
         }
-
         return _instance;
     }
+
     public void changeState(GameState nextState) {
         if ( currentState != GameState.PAUSE && currentState != GameState.OPTIONS && nextState == GameState.GAME ) Reset();
         currentState = nextState;
@@ -54,9 +46,20 @@ public class GameManager {
         //    }
         //}
     }
+
     public void Reset() {
         remainingTime = 20.0f;
         player.Reset();
+        endGameStatus = EndGameState.LOST;
+    }
+
+    public void EndGame() {
+        if ( remainingTime <= 0f ) {
+            endGameStatus = EndGameState.LOST;
+        } else {
+            endGameStatus = EndGameState.WON;
+        }
+        changeState(GameManager.GameState.ENDGAME);
     }
 
 }
