@@ -37,7 +37,6 @@ public class PlayerController : MonoBehaviour {
 
     void Update() {
         if ( gm.currentState != GameManager.GameState.GAME ) {
-            Debug.Log(gm.currentState);
             return;
         }
 
@@ -55,35 +54,54 @@ public class PlayerController : MonoBehaviour {
 
         //Verificando se é preciso aplicar a gravidade
         float y = 0;
-        if ( !characterController.isGrounded ) {
-            y = -_gravidade;
+        //if ( !characterController.isGrounded ) {
+        //    y = -_gravidade;
+        //}
+
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            //transform.position += new Vector3(0, 100, 0) * 10 * Time.deltaTime;
+            //characterController.SimpleMove(new Vector3(0, 100, 0));
+            //characterController.Move(new Vector3(0, 100, 0) * 1 * Time.deltaTime);
+            //y = 10;
+
+            warpPosition = new Vector3(0, 5, 0);
+
+
+
+            //Vector3 aaa = transform.right * x + transform.up * y + transform.forward * z;
+
+            //characterController.Move(aaa * _baseSpeed * Time.deltaTime);
         }
 
         //Tratando movimentação do mouse
         float mouse_dX = Input.GetAxis("Mouse X");
         float mouse_dY = Input.GetAxis("Mouse Y");
 
-        //Tratando a rotação da câmera
+        //Tratando a rotação da câmeras
         cameraRotation += mouse_dY;
         Mathf.Clamp(cameraRotation, -75.0f, 75.0f);
 
         Vector3 direction = transform.right * x + transform.up * y + transform.forward * z;
 
+        Debug.Log(direction * _baseSpeed * Time.deltaTime);
         characterController.Move(direction * _baseSpeed * Time.deltaTime);
         transform.Rotate(Vector3.up, mouse_dX);
         playerCamera.transform.localRotation = Quaternion.Euler(cameraRotation, 0.0f, 0.0f);
     }
 
     void LateUpdate() {
-        RaycastHit hit;
+        if (gm.currentState != GameManager.GameState.GAME) {
+            return;
+        }
 
-        Debug.DrawRay(transform.position, playerCamera.transform.forward* 10.0f, Color.magenta);
+        RaycastHit hit;
+        Debug.DrawRay(transform.position, playerCamera.transform.forward* 5.0f, Color.magenta);
         if (gm.currentState == GameManager.GameState.GAME) {
             if ( Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, 5.0f) ) {
                 if ( hit.collider.gameObject.Equals(chest) ) {
                     gm.EndGame();
+                    Reset();
                 }
-                //gm.EndGame();
             }
         }
         //if ( Physics.Raycast(playerCamera.transform.position, transform.forward, out hit, 100.0f) ) {

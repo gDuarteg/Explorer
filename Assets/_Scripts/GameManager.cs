@@ -48,9 +48,9 @@ public class GameManager {
     }
 
     public void Reset() {
-        remainingTime = 20.0f;
-        player.Reset();
         endGameStatus = EndGameState.LOST;
+        remainingTime = 30.0f;
+        player.Reset();
     }
 
     public void EndGame() {
