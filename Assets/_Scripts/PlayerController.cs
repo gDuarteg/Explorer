@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour {
     float _baseSpeed = 10.0f;
     float _gravidade = 9.8f;
     float jumpForce = 200;
-
+    bool doubleJump = false;
     public GameObject chest;
     
     GameManager gm;
@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour {
 
     void Update() {
         if ( gm.currentState != GameManager.GameState.GAME ) {
+
             return;
         }
 
@@ -73,7 +74,6 @@ public class PlayerController : MonoBehaviour {
         //    y = -_gravidade;
         //}
 
-
         //Tratando movimentação do mouse
         float mouse_dX = Input.GetAxis("Mouse X");
         float mouse_dY = Input.GetAxis("Mouse Y");
@@ -81,14 +81,25 @@ public class PlayerController : MonoBehaviour {
         //Tratando a rotação da câmeras
         cameraRotation += mouse_dY;
         Mathf.Clamp(cameraRotation, -75.0f, 75.0f);
+        
+        if (Input.GetKeyDown(KeyCode.LeftShift)) {
+            _baseSpeed = 20.0f;
+        }
+        if (Input.GetKeyUp(KeyCode.LeftShift)) {
+            _baseSpeed = 10.0f;
+        }
 
         Vector3 moveDirection = new Vector3(x, 0, z);
         moveDirection = transform.TransformDirection(moveDirection);
         moveDirection *= _baseSpeed;
 
-        if (Input.GetKeyDown(KeyCode.Space) && characterController.isGrounded) {
-            moveDirection.y = jumpForce;
+        if (characterController.isGrounded) {
+            doubleJump = false;
+            if (Input.GetKeyDown(KeyCode.Space)) {
+                moveDirection.y = jumpForce;
+            }
         }
+
         if (!characterController.isGrounded) {
             moveDirection.y -= _gravidade;
         }
