@@ -8,7 +8,9 @@ public class PlayerController : MonoBehaviour {
     float jumpForce = 300;
     bool doubleJump = true;
     public GameObject chest;
-    
+
+    public GameObject minimapa;
+
     GameManager gm;
     CharacterController characterController;
     //public Rigidbody rb;
@@ -39,8 +41,15 @@ public class PlayerController : MonoBehaviour {
 
     void Update() {
         if ( gm.currentState != GameManager.GameState.GAME ) {
-
+            if ( minimapa.active ) { 
+                minimapa.SetActive(false);
+            }
             return;
+        } else {
+            if ( !minimapa.active ) {
+                minimapa.SetActive(true);
+            }
+
         }
 
         if ( Input.GetKeyDown(KeyCode.Escape) && gm.currentState == GameManager.GameState.GAME ) {
@@ -65,10 +74,10 @@ public class PlayerController : MonoBehaviour {
         //if (!characterController.isGrounded) {
         //    y = -_gravidade;
         //}
-        
+
         //if(characterController.isGrounded) {
         //    y = -_gravidade;
-            
+
         //    if (Input.GetKeyDown(KeyCode.Space)) {
         //        //transform.position += new Vector3(0, 100, 0) * 10 * Time.deltaTime;
         //        //characterController.SimpleMove(new Vector3(0, 100, 0));
@@ -86,11 +95,11 @@ public class PlayerController : MonoBehaviour {
         //Tratando a rota��o da c�meras
         cameraRotation += mouse_dY;
         Mathf.Clamp(cameraRotation, -75.0f, 75.0f);
-        
-        if (Input.GetKeyDown(KeyCode.LeftShift)) {
+
+        if ( Input.GetKeyDown(KeyCode.LeftShift) ) {
             _baseSpeed = 20.0f;
         }
-        if (Input.GetKeyUp(KeyCode.LeftShift)) {
+        if ( Input.GetKeyUp(KeyCode.LeftShift) ) {
             _baseSpeed = 10.0f;
         }
 
@@ -102,11 +111,11 @@ public class PlayerController : MonoBehaviour {
         } else {
             gm.SetSoundFx(SoundFXManager.ClipName.IDLE);
         }
-        if (Input.GetKeyDown(KeyCode.LeftControl)) {
+        if ( Input.GetKeyDown(KeyCode.LeftControl) ) {
             _baseSpeed = 5.0f;
             playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
         }
-        if (Input.GetKeyUp(KeyCode.LeftControl)) {
+        if ( Input.GetKeyUp(KeyCode.LeftControl) ) {
             _baseSpeed = 10.0f;
             playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + 0.69f, transform.position.z);
         }
@@ -115,18 +124,17 @@ public class PlayerController : MonoBehaviour {
         moveDirection = transform.TransformDirection(moveDirection);
         moveDirection *= _baseSpeed;
 
-        if (characterController.isGrounded || doubleJump == true) {
-            if (Input.GetKeyDown(KeyCode.Space) && _baseSpeed == 10.0f) {
+        if ( characterController.isGrounded || doubleJump == true ) {
+            if ( Input.GetKeyDown(KeyCode.Space) && _baseSpeed == 10.0f ) {
                 moveDirection.y = jumpForce * 2;
                 doubleJump = false;
-            }
-            else if(Input.GetKeyDown(KeyCode.Space) && _baseSpeed == 20.0f) {
+            } else if ( Input.GetKeyDown(KeyCode.Space) && _baseSpeed == 20.0f ) {
                 moveDirection.y = jumpForce * 3;
                 doubleJump = false;
             }
         }
 
-        if (!characterController.isGrounded) {
+        if ( !characterController.isGrounded ) {
             moveDirection.y -= _gravidade;
         } else {
             doubleJump = true;
@@ -139,13 +147,13 @@ public class PlayerController : MonoBehaviour {
     }
 
     void LateUpdate() {
-        if (gm.currentState != GameManager.GameState.GAME) {
+        if ( gm.currentState != GameManager.GameState.GAME ) {
             return;
         }
-        
+
         RaycastHit hit;
-        Debug.DrawRay(transform.position, playerCamera.transform.forward* 5.0f, Color.magenta);
-        if (gm.currentState == GameManager.GameState.GAME) {
+        Debug.DrawRay(transform.position, playerCamera.transform.forward * 5.0f, Color.magenta);
+        if ( gm.currentState == GameManager.GameState.GAME ) {
             if ( Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, 5.0f) ) {
                 if ( hit.collider.gameObject.Equals(chest) ) {
                     gm.EndGame();
