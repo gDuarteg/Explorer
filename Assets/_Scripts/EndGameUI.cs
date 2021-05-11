@@ -14,8 +14,10 @@ public class EndGameUI : MonoBehaviour {
     void Update() {
         string response;
         if ( gm.endGameStatus == GameManager.EndGameState.WON ) {
+            gm.SetSoundFx(SoundFXManager.ClipName.WIN);
             response = "You Won!";
         } else {
+            gm.SetSoundFx(SoundFXManager.ClipName.LOOSE);
             response = "You Lost!";
         }
         textComp.text = $"{response}";

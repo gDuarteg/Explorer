@@ -45,6 +45,8 @@ public class PlayerController : MonoBehaviour {
 
         if ( Input.GetKeyDown(KeyCode.Escape) && gm.currentState == GameManager.GameState.GAME ) {
             gm.changeState(GameManager.GameState.PAUSE);
+            gm.SetSoundFx(SoundFXManager.ClipName.IDLE);
+
             return;
         }
 
@@ -52,8 +54,11 @@ public class PlayerController : MonoBehaviour {
         if ( gm.remainingTime <= 0 ) {
             gm.EndGame();
         }
+
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
+
+
 
         //Verificando se é preciso aplicar a gravidade
         //float y = 0;
@@ -89,6 +94,15 @@ public class PlayerController : MonoBehaviour {
             _baseSpeed = 10.0f;
         }
 
+        // Sound Fx
+        if ( _baseSpeed == 20.0f ) {
+            gm.SetSoundFx(SoundFXManager.ClipName.RUNNING);
+        } else if ( x != 0 || z != 0 ) {
+            gm.SetSoundFx(SoundFXManager.ClipName.WALKING);
+        } else {
+            gm.SetSoundFx(SoundFXManager.ClipName.IDLE);
+        }
+
         Vector3 moveDirection = new Vector3(x, 0, z);
         moveDirection = transform.TransformDirection(moveDirection);
         moveDirection *= _baseSpeed;
@@ -104,7 +118,6 @@ public class PlayerController : MonoBehaviour {
             moveDirection.y -= _gravidade;
         }
 
-        Debug.Log(moveDirection);
         characterController.Move(moveDirection * Time.deltaTime);
 
         transform.Rotate(Vector3.up, mouse_dX);
