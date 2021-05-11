@@ -5,17 +5,17 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
     float _baseSpeed = 10.0f;
     float _gravidade = 9.8f;
-    float jumpForce = 200;
-    bool doubleJump = false;
+    float jumpForce = 300;
+    bool doubleJump = true;
     public GameObject chest;
     
     GameManager gm;
     CharacterController characterController;
     //public Rigidbody rb;
 
-    //Referência usada para a câmera filha do jogador
+    //Referencia usada para a camera filha do jogador
     GameObject playerCamera;
-    //Utilizada para poder travar a rotação no angulo que quisermos.
+    //Utilizada para poder travar a rotaï¿½ï¿½o no angulo que quisermos.
     float cameraRotation;
 
     Vector3 warpPosition = Vector3.zero;
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour {
 
 
 
-        //Verificando se é preciso aplicar a gravidade
+        //Verificando se ï¿½ preciso aplicar a gravidade
         //float y = 0;
         //if (!characterController.isGrounded) {
         //    y = -_gravidade;
@@ -79,11 +79,11 @@ public class PlayerController : MonoBehaviour {
         //    y = -_gravidade;
         //}
 
-        //Tratando movimentação do mouse
+        //Tratando movimentaï¿½ï¿½o do mouse
         float mouse_dX = Input.GetAxis("Mouse X");
         float mouse_dY = Input.GetAxis("Mouse Y");
 
-        //Tratando a rotação da câmeras
+        //Tratando a rotaï¿½ï¿½o da cï¿½meras
         cameraRotation += mouse_dY;
         Mathf.Clamp(cameraRotation, -75.0f, 75.0f);
         
@@ -102,20 +102,34 @@ public class PlayerController : MonoBehaviour {
         } else {
             gm.SetSoundFx(SoundFXManager.ClipName.IDLE);
         }
+        if (Input.GetKeyDown(KeyCode.LeftControl)) {
+            _baseSpeed = 5.0f;
+            playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
+        }
+        if (Input.GetKeyUp(KeyCode.LeftControl)) {
+            _baseSpeed = 10.0f;
+            playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + 0.69f, transform.position.z);
+        }
 
         Vector3 moveDirection = new Vector3(x, 0, z);
         moveDirection = transform.TransformDirection(moveDirection);
         moveDirection *= _baseSpeed;
 
-        if (characterController.isGrounded) {
-            doubleJump = false;
-            if (Input.GetKeyDown(KeyCode.Space)) {
-                moveDirection.y = jumpForce;
+        if (characterController.isGrounded || doubleJump == true) {
+            if (Input.GetKeyDown(KeyCode.Space) && _baseSpeed == 10.0f) {
+                moveDirection.y = jumpForce * 2;
+                doubleJump = false;
+            }
+            else if(Input.GetKeyDown(KeyCode.Space) && _baseSpeed == 20.0f) {
+                moveDirection.y = jumpForce * 3;
+                doubleJump = false;
             }
         }
 
         if (!characterController.isGrounded) {
             moveDirection.y -= _gravidade;
+        } else {
+            doubleJump = true;
         }
 
         characterController.Move(moveDirection * Time.deltaTime);
