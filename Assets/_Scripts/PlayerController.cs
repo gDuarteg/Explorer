@@ -11,7 +11,9 @@ public class PlayerController : MonoBehaviour {
     float maxStamina = 100f;
 
     public GameObject chest;
+
     public Staminabar staminabar;
+    public GameObject minimapa;
 
     GameManager gm;
     CharacterController characterController;
@@ -45,8 +47,15 @@ public class PlayerController : MonoBehaviour {
 
     void Update() {
         if ( gm.currentState != GameManager.GameState.GAME ) {
-
+            if ( minimapa.active ) { 
+                minimapa.SetActive(false);
+            }
             return;
+        } else {
+            if ( !minimapa.active ) {
+                minimapa.SetActive(true);
+            }
+
         }
 
         if ( Input.GetKeyDown(KeyCode.Escape) && gm.currentState == GameManager.GameState.GAME ) {
@@ -97,11 +106,11 @@ public class PlayerController : MonoBehaviour {
         } else {
             gm.SetSoundFx(SoundFXManager.ClipName.IDLE);
         }
-        if (Input.GetKeyDown(KeyCode.LeftControl)) {
+        if ( Input.GetKeyDown(KeyCode.LeftControl) ) {
             _baseSpeed = 5.0f;
             playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
         }
-        if (Input.GetKeyUp(KeyCode.LeftControl)) {
+        if ( Input.GetKeyUp(KeyCode.LeftControl) ) {
             _baseSpeed = 10.0f;
             playerCamera.transform.position = new Vector3(transform.position.x, transform.position.y + 0.69f, transform.position.z);
         }
@@ -121,7 +130,7 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
-        if (!characterController.isGrounded) {
+        if ( !characterController.isGrounded ) {
             moveDirection.y -= _gravidade;
         } else {
             doubleJump = true;
@@ -134,13 +143,13 @@ public class PlayerController : MonoBehaviour {
     }
 
     void LateUpdate() {
-        if (gm.currentState != GameManager.GameState.GAME) {
+        if ( gm.currentState != GameManager.GameState.GAME ) {
             return;
         }
 
         RaycastHit hit;
-        Debug.DrawRay(transform.position, playerCamera.transform.forward* 5.0f, Color.magenta);
-        if (gm.currentState == GameManager.GameState.GAME) {
+        Debug.DrawRay(transform.position, playerCamera.transform.forward * 5.0f, Color.magenta);
+        if ( gm.currentState == GameManager.GameState.GAME ) {
             if ( Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, 5.0f) ) {
                 if ( hit.collider.gameObject.Equals(chest) ) {
                     gm.EndGame();
