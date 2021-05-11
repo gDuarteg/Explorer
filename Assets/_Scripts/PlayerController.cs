@@ -47,14 +47,14 @@ public class PlayerController : MonoBehaviour {
 
     void Update() {
         if ( gm.currentState != GameManager.GameState.GAME ) {
-            if ( minimapa.active ) { 
-                minimapa.SetActive(false);
-            }
+            //if ( minimapa.active ) { 
+            //    minimapa.SetActive(false);
+            //}
             return;
         } else {
-            if ( !minimapa.active ) {
-                minimapa.SetActive(true);
-            }
+            //if ( !minimapa.active ) {
+            //    minimapa.SetActive(true);
+            //}
 
         }
 
@@ -97,7 +97,7 @@ public class PlayerController : MonoBehaviour {
         }
 
 
-        Debug.Log(stamina);
+        //Debug.Log(stamina);
         // Sound Fx
         if ( _baseSpeed == 20.0f ) {
             gm.SetSoundFx(SoundFXManager.ClipName.RUNNING);
