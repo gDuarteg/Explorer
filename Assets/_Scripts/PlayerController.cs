@@ -7,8 +7,12 @@ public class PlayerController : MonoBehaviour {
     float _gravidade = 9.8f;
     float jumpForce = 300;
     bool doubleJump = true;
+    float stamina = 100f;
+    float maxStamina = 100f;
+
     public GameObject chest;
-    
+    public Staminabar staminabar;
+
     GameManager gm;
     CharacterController characterController;
     //public Rigidbody rb;
@@ -35,6 +39,8 @@ public class PlayerController : MonoBehaviour {
         characterController = GetComponent<CharacterController>();
         playerCamera = GameObject.Find("Main Camera");
         cameraRotation = 0.0f;
+        
+        staminabar.SetStamina(stamina, maxStamina);
     }
 
     void Update() {
@@ -58,27 +64,6 @@ public class PlayerController : MonoBehaviour {
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-
-
-        //Verificando se � preciso aplicar a gravidade
-        //float y = 0;
-        //if (!characterController.isGrounded) {
-        //    y = -_gravidade;
-        //}
-        
-        //if(characterController.isGrounded) {
-        //    y = -_gravidade;
-            
-        //    if (Input.GetKeyDown(KeyCode.Space)) {
-        //        //transform.position += new Vector3(0, 100, 0) * 10 * Time.deltaTime;
-        //        //characterController.SimpleMove(new Vector3(0, 100, 0));
-        //        //characterController.Move(new Vector3(0, 100, 0) * 1 * Time.deltaTime);
-        //        y = jumpForce;
-        //    }
-        //} else {
-        //    y = -_gravidade;
-        //}
-
         //Tratando movimenta��o do mouse
         float mouse_dX = Input.GetAxis("Mouse X");
         float mouse_dY = Input.GetAxis("Mouse Y");
@@ -87,13 +72,23 @@ public class PlayerController : MonoBehaviour {
         cameraRotation += mouse_dY;
         Mathf.Clamp(cameraRotation, -75.0f, 75.0f);
         
-        if (Input.GetKeyDown(KeyCode.LeftShift)) {
+        if (Input.GetKeyDown(KeyCode.LeftShift) && stamina >= 1) {
             _baseSpeed = 20.0f;
         }
-        if (Input.GetKeyUp(KeyCode.LeftShift)) {
+        if (Input.GetKeyUp(KeyCode.LeftShift) || stamina <= 1) {
             _baseSpeed = 10.0f;
         }
 
+        if (_baseSpeed == 20.0f && stamina >= 0) { 
+            stamina -= Time.deltaTime * 35;
+            staminabar.SetStamina(stamina, maxStamina);
+        } else if (_baseSpeed == 10.0f && stamina < maxStamina) { 
+            stamina += Time.deltaTime * 10f;
+            staminabar.SetStamina(stamina, maxStamina);
+        }
+
+
+        Debug.Log(stamina);
         // Sound Fx
         if ( _baseSpeed == 20.0f ) {
             gm.SetSoundFx(SoundFXManager.ClipName.RUNNING);
@@ -117,11 +112,11 @@ public class PlayerController : MonoBehaviour {
 
         if (characterController.isGrounded || doubleJump == true) {
             if (Input.GetKeyDown(KeyCode.Space) && _baseSpeed == 10.0f) {
-                moveDirection.y = jumpForce * 2;
+                moveDirection.y = jumpForce;
                 doubleJump = false;
             }
             else if(Input.GetKeyDown(KeyCode.Space) && _baseSpeed == 20.0f) {
-                moveDirection.y = jumpForce * 3;
+                moveDirection.y = jumpForce * 2;
                 doubleJump = false;
             }
         }
@@ -142,7 +137,7 @@ public class PlayerController : MonoBehaviour {
         if (gm.currentState != GameManager.GameState.GAME) {
             return;
         }
-        
+
         RaycastHit hit;
         Debug.DrawRay(transform.position, playerCamera.transform.forward* 5.0f, Color.magenta);
         if (gm.currentState == GameManager.GameState.GAME) {
