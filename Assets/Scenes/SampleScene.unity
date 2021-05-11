@@ -51940,6 +51940,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mixer: {fileID: 24100000, guid: 5efea6c455701dc4dac2b604a4fbb46c, type: 2}
+  volName: MusicVol
 --- !u!1 &144050552
 GameObject:
   m_ObjectHideFlags: 0
@@ -59177,7 +59178,7 @@ GameObject:
   - component: {fileID: 1082199595}
   - component: {fileID: 1082199594}
   m_Layer: 0
-  m_Name: Audio Source
+  m_Name: SoundFX Music
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59204,7 +59205,7 @@ AudioSource:
   m_GameObject: {fileID: 1082199593}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 2a0bd6604ac3103408206b8c48ccb8d3, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -64490,6 +64491,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1187647164}
   - component: {fileID: 1187647165}
+  - component: {fileID: 1187647166}
   m_Layer: 5
   m_Name: Volume Slider
   m_TagString: Untagged
@@ -64563,13 +64565,39 @@ MonoBehaviour:
   m_FillRect: {fileID: 1453633187}
   m_HandleRect: {fileID: 904203340}
   m_Direction: 0
-  m_MinValue: 0
+  m_MinValue: 0.0001
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1187647166}
+        m_TargetAssemblyTypeName: SetVolume, Assembly-CSharp
+        m_MethodName: SetLevel
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1187647166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1187647163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eadbfbb804f31544f96d03419afd2601, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mixer: {fileID: 24100000, guid: 2a0bd6604ac3103408206b8c48ccb8d3, type: 2}
+  volName: SoundFxVol
 --- !u!1 &1202059238
 GameObject:
   m_ObjectHideFlags: 0
@@ -66953,7 +66981,7 @@ GameObject:
   - component: {fileID: 1877361355}
   - component: {fileID: 1877361354}
   m_Layer: 0
-  m_Name: BackgroundMusic
+  m_Name: Background Music
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

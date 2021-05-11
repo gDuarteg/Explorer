@@ -5,7 +5,9 @@ using System.Collections;
 public class SetVolume : MonoBehaviour {
     public AudioMixer mixer;
 
+    public string volName;
+
     public void SetLevel(float sliderValue) {
-        mixer.SetFloat("MusicVol", Mathf.Log10(sliderValue) * 20);
+        mixer.SetFloat(volName, Mathf.Log10(sliderValue) * 20);
     }
 }
